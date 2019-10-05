@@ -1,0 +1,29 @@
+body{
+  background-color: pink;
+}
+header{
+
+  font-style: italic;
+  font-size: 28px;
+  color: black;
+  /* text-align: center; */
+  font-weight: bolder;
+
+}
+.err{
+  color:red;
+}
+
+.main{
+  justify-content: center;
+  position: absolute;
+  display:flex;
+  flex-direction: column;
+}
+img{
+  position:relative;
+}
+#canvas{
+  border: dotted orange;
+  background-color: gainsboro;
+}

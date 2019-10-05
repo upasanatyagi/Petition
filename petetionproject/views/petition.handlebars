@@ -1,0 +1,22 @@
+
+      <div class= "main">
+        <div>
+          <header>Sign our petition to make world a better place.Let's save "GIRL CHILD" in INDIA.Its never too late to start.</header>
+        </div>
+        <div >
+          <img  src="/girlchildsave.jpeg" alt="broken image">
+        </div>
+
+          {{#if error }}
+          <div class="err">Oops!something went wrong"</div>
+          {{/if}}
+
+
+          <form method ="POST">
+            <input name="first">
+            <input name="last">
+            <input  name ="sig" type="hidden">
+            <canvas id="canvas" width='500' height='100'></canvas>
+            <button>Submit</button>
+          </form>
+      </div>
