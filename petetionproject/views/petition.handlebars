@@ -1,7 +1,7 @@
 
       <div class= "main">
         <div>
-          <header>Sign our petition to make world a better place.Let's save "GIRL CHILD" in INDIA.Its never too late to start.</header>
+          <header>Sign our petition to make world a better place.Let's join hands to save "GIRL CHILD" in INDIA.Every voice counts!!</header>
         </div>
         <div >
           <img  src="/girlchildsave.jpeg" alt="broken image">
@@ -12,11 +12,20 @@
           {{/if}}
 
 
-          <form method ="POST">
-            <input name="first">
-            <input name="last">
-            <input  name ="sig" type="hidden">
-            <canvas id="canvas" width='500' height='100'></canvas>
-            <button>Submit</button>
+          <form method ="POST" action="/petition">
+            First name:<br>
+            <input  type="text" name="first"><br>
+            Last name:<br>
+            <input type="text" name="last"><br>
+            <input  name ="sig" type="hidden"><br>
+            Please sign here:<br>
+            <canvas id="canvas" width='500' height='100'></canvas><br>
+            <!-- call script.js for canvas  -->
+            <button type="submit">Submit</button>
           </form>
+
+          <div>
+            <img src="/kids-2.jpg" height="300"width="500"alt="broken image">
+          </div>
+
       </div>

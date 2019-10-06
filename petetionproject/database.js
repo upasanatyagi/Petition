@@ -7,14 +7,10 @@ module.exports.getPetition = () => {
         `SELECT first,last FROM signatures`);
 };
 
-module.exports.postPetition = (first, last, signature) => {
-    db.query(
+module.exports.postPetition = function(first, last, signature) {
+    return db.query(
         `INSERT INTO signatures (first,last, signature) VALUES ($1,  $2, $3)`,
         [first, last, signature]
-    ).catch(
-        err => console.log(err.message)
-        // ).then(
-        //     return "error"
     );
-    // RETURNING "success"
+
 };
