@@ -12,6 +12,8 @@ header{
 }
 .err{
   color:red;
+  font-size: 30px;
+  font-weight: bold;
 }
 
 .main{
@@ -25,7 +27,16 @@ img{
   position:relative;
   border:dotted black;
 }
-#canvas{
+#signedCanvas{
   border: dotted orange;
   background-color: gainsboro;
+}
+.box{
+  border: 2px solid black;
+  display:flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.list{
+  /* position: ealative; */
 }

@@ -7,10 +7,6 @@
           <img  src="/girlchildsave.jpeg" alt="broken image">
         </div>
 
-          {{#if error }}
-          <div class="err">Oops!something went wrong"</div>
-          {{/if}}
-
 
           <form method ="POST" action="/petition">
             First name:<br>
@@ -18,11 +14,16 @@
             Last name:<br>
             <input type="text" name="last"><br>
             <input  name ="sig" type="hidden"><br>
+            <input name="_csrf" value="{{csrfToken}}" type="hidden">
             Please sign here:<br>
-            <canvas id="canvas" width='500' height='100'></canvas><br>
-            <!-- call script.js for canvas  -->
+            <input type="hidden" name="signatures" id="signatures">
+            <canvas id="signedCanvas" width='500' height='250'></canvas><br>
             <button type="submit">Submit</button>
           </form>
+
+          {{#if error }}
+          <div class="err">Oops!something went wrong.Please dont forget to fill the form and sign it."</div>
+          {{/if}}
 
           <div>
             <img src="/kids-2.jpg" height="300"width="500"alt="broken image">
