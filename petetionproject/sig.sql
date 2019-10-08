@@ -5,5 +5,4 @@
    first VARCHAR(200)NOT NULL CHECK (first !=''),
    last VARCHAR(200)NOT NULL CHECK (last !=''),
    signature TEXT NOT NULL
-
  );

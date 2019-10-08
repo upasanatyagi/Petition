@@ -16,8 +16,9 @@ module.exports.postPetition = function(first, last, signature) {
     );
 
 };
-module.exports.signId = function() {
+module.exports.signId = function(usersignId) {
     return db.query(
-        `SELECT signature FROM signatures WHERE id = $1`
+        `SELECT signature, first FROM signatures WHERE id = $1`,
+        [usersignId]
     );
 };

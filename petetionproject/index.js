@@ -72,8 +72,22 @@ app.post('/petition', (request, response) => {
 
 
 app.get('/thanks', (req, res) => {
-    res.render('thanks');
+    // res.render('thanks');
+    let usersignId = req.session.userId;
+    // let renderObject = {};
+    db.signId(usersignId)
+        .then(({
+            rows
+        }) => {
+            console.log("first row:", rows[0].first);
+
+            res.render('thanks', {
+                first: rows[0].first,
+                signature: rows[0].signature
+            });
+        });
 });
+
 
 app.get('/signers', (req, res) => {
     db.getPetition().then(
@@ -87,6 +101,29 @@ app.get('/signers', (req, res) => {
 
     );
 });
+
+app.get('/registration', (req, res) => {
+    res.render('registration');
+});
+
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+// app.post('/registration', (req, res) => {
+//get their stored hashed password by their email address
+//compare the password they typed to the hash from the db
+//if there's a match
+//log them in
+//do a query to find out if they signed
+//redirect to petition
+//if there is not a match, then re-render form with error msg
+// });
+
+app.listen(8080, () => console.log("petition project listening..."));
+
+
+
 
 
 // app.get('/test', (req, res) => {
@@ -102,7 +139,3 @@ app.get('/signers', (req, res) => {
 //     console.log('req.sessionin / test before redirect:', req.session);
 //     res.redirect('/');
 // });
-
-
-
-app.listen(8080, () => console.log("petition project listening..."));
