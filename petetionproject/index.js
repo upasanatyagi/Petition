@@ -5,6 +5,8 @@ const hb = require('express-handlebars');
 const cookieSession = require('cookie-session');
 const db = require('./database');
 const csurf = require('csurf');
+const bcrypt = require('./bcrypt');
+
 
 app.engine('handlebars', hb());
 app.set('view engine', 'handlebars');
@@ -33,7 +35,7 @@ app.use((req, res, next) => {
 // });
 
 app.get('/', (req, res) => {
-    console.log('req.sessionin /route');
+    // console.log('req.sessionin /route');
     res.redirect('/petition');
 });
 
@@ -63,7 +65,7 @@ app.post('/petition', (request, response) => {
         })
         .catch((e) => {
             console.log(e);
-            return response.render("petition", {
+            response.render("petition", {
                 error: true
             });
         });
@@ -72,15 +74,12 @@ app.post('/petition', (request, response) => {
 
 
 app.get('/thanks', (req, res) => {
-    // res.render('thanks');
     let usersignId = req.session.userId;
-    // let renderObject = {};
     db.signId(usersignId)
         .then(({
             rows
         }) => {
             console.log("first row:", rows[0].first);
-
             res.render('thanks', {
                 first: rows[0].first,
                 signature: rows[0].signature
@@ -106,19 +105,78 @@ app.get('/registration', (req, res) => {
     res.render('registration');
 });
 
+app.post('/registration', (request, response) => {
+    let first = request.body.first;
+    let last = request.body.last;
+    let email = request.body.email;
+    let userPassword = request.body.password;
+
+    bcrypt.hash(userPassword).then(result => {
+        console.log(result);
+        db.postRegistration(first, last, email, result) //password already encrypted as result
+            .then(({
+                rows
+            }) => {
+                console.log("rows", rows);
+                request.session.userId = rows[0].id;
+                console.log("userId:", request.session.userId);
+                response.redirect('/petition');
+
+            })
+            .catch((e) => {
+                console.log(e);
+                response.render("registration", {
+                    error: true
+                });
+            });
+    });
+});
+
+
 app.get('/login', (req, res) => {
     res.render('login');
 });
 
-// app.post('/registration', (req, res) => {
-//get their stored hashed password by their email address
-//compare the password they typed to the hash from the db
-//if there's a match
-//log them in
-//do a query to find out if they signed
-//redirect to petition
-//if there is not a match, then re-render form with error msg
-// });
+app.post('/login', (request, response) => {
+    // res.render('login');
+    let email = request.body.email;
+    let password = request.body.password;
+    console.log('email:', email);
+    db.login(email)
+        .then(({
+            rows
+        }) => {
+
+            console.log("rows:", rows);
+
+            console.log("request.body.password:", password);
+            if (bcrypt.compare(password, rows[0].password)) {
+                request.session.userId = rows[0].id;
+                console.log("request.session.usersessionId:", request.session.userId);
+                db.getSign(rows[0].id).then((result) => {
+                    console.log("-------------- password matched:", result);
+                    if (result.rows.length < 0) {
+                        response.redirect('petition');
+                    }
+                });
+            } else {
+                console.log(">>>>>>>failed");
+                response.render('login');
+            }
+
+        })
+        .catch((e) => {
+            console.log(e);
+            console.log("----------catch-------------");
+
+            response.render("login", {
+                error: true
+            });
+
+        });
+    console.log("-----------------------");
+    response.end();
+});
 
 app.listen(8080, () => console.log("petition project listening..."));
 
