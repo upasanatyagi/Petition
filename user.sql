@@ -6,12 +6,6 @@ CREATE TABLE users(
    email VARCHAR NOT NULL UNIQUE,
    password VARCHAR NOT NULL
 
-)
- -- CREATE TABLE user_profiles(
- --   id SERIAL PRIMARY KEY,
- --   age INT,
- --   city VARCHAR,
- --   url VARCHAR,
- --   USER_id INT REFERENCES users(id) NOT NULL UNIQUE
- -- );
+);
+
  SELECT * FROM users;

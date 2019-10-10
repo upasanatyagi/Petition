@@ -50,34 +50,71 @@ app.get("/petition", (req, res) => {
 
 //checking cookies,if not present
 app.post("/petition", (request, response) => {
+    console.log("............in post petition");
+    console.log(
+        "uuuuu ",
+        request.session.userId,
+        "signed: ",
+        request.session.signed
+    );
     let first = request.body.first;
     let last = request.body.last;
     let signature = request.body.signatures;
-    console.log(first, last, signature);
-    db.postPetition(first, last, signature)
-        .then(({ rows }) => {
-            console.log("rows", rows);
-            // response.cookie('signed', 'true');
-            request.session.signed = "true";
-            response.redirect("/thanks");
-        })
-        .catch(e => {
-            console.log(e);
-            response.render("petition", {
-                error: true
+    // let userId = request.session.userId;
+
+    if (request.session.userId) {
+        if (request.session.signed == "true") {
+            console.log("....petition already signed");
+            return response.redirect("/thanks");
+        }
+        // console.log(first, last, signature);
+        console.log("....petition not signed");
+
+        db.postPetition(first, last, signature, request.session.userId)
+            .then(({ rows }) => {
+                console.log("rows", rows);
+                // response.cookie('signed', 'true');
+                request.session.signed = "true";
+                console.log("............redirect post petition");
+
+                return response.redirect("/thanks");
+            })
+            .catch(e => {
+                console.log(e);
+                response.render("petition", {
+                    error: true
+                });
             });
-        });
+        console.log("in ptition post");
+    } else {
+        console.log("in else not logged in ");
+        return response.redirect("/login");
+    }
 });
 
 app.get("/thanks", (req, res) => {
+    console.log("............in thanks");
+
     let usersignId = req.session.userId;
-    db.signId(usersignId).then(({ rows }) => {
-        console.log("first row:", rows[0].first);
-        res.render("thanks", {
-            first: rows[0].first,
-            signature: rows[0].signature
+    console.log("//////////    ", usersignId);
+    if (usersignId == "") {
+        console.log("thanks:::not_signed in redirect to login");
+        return res.redirect("/login");
+    }
+    console.log("aaaaammmmmmmmmmmmmmmmmmmmm here");
+    db.signId(usersignId)
+        .then(({ rows }) => {
+            console.log("first row:", rows);
+            res.render("thanks", {
+                // first: rows[0].first,
+                signature: rows[0].signature
+            });
+        })
+        .catch(e => {
+            console.log("ssssssssssssssssssssssssssssss");
+            console.log(e);
         });
-    });
+    // });
 });
 
 app.get("/signers", (req, res) => {
@@ -104,8 +141,9 @@ app.post("/registration", (request, response) => {
         console.log(result);
         db.postRegistration(first, last, email, result) //password already encrypted as result
             .then(({ rows }) => {
-                console.log("rows", rows);
+                console.log("rows", rows[0].id);
                 request.session.loggedIn = "true";
+                request.session.userId = rows[0].id;
                 console.log("userId:", request.session.userId);
                 response.redirect("/petition");
             })
@@ -123,31 +161,52 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", (request, response) => {
+    console.log("................ inside login");
+    let userId;
     let { password, email } = request.body;
     db.login(email)
         .then(result => {
-            let { hash } = result.rows[0];
+            // console.log("................ inside login::: first then", result);
+
+            let { id, hash } = result.rows[0];
+            userId = id;
+            console.log("......>>>>....", userId, hash);
             return bcrypt.compare(password, hash).then(result => {
                 console.log(result);
+                return result;
             });
         })
         .then(authorised => {
+            "................ auth inside login::: 2nd thllllllen";
             if (!authorised) {
                 return response.render("login", { error: true });
             }
             // get user data from database
             // set the cookie that indicates that the user is logged in
             request.session.loggedIn = "true";
+            request.session.userId = userId;
             // return the user id to the then statement
         })
         .then(userId => {
-            db.getSign(userId).then(result => {
-                let { signature } = result.rows[0];
-                if (signature) {
-                    request.session.signed = "true";
-                }
-            });
-            return response.redirect("petition");
+            db.getSign(userId)
+                .then(result => {
+                    console.log("------------------");
+                    console.log(result.rows);
+                    console.log("------------------");
+                    if (result.rows.length > 0) {
+                        // let { signature } = rows[0];
+                        request.session.signed = "true";
+                        console.log("//././..thanks");
+                        return response.redirect("/thanks");
+                    } else {
+                        console.log("//././..petition");
+                        return response.redirect("petition");
+                    }
+                })
+                .catch(e => {
+                    console.log("llllllll", e);
+                });
+            console.log("................ inside login::: 2nd then");
         })
         .catch(e => {
             console.log(e);
