@@ -51,12 +51,6 @@ app.get("/petition", (req, res) => {
 //checking cookies,if not present
 app.post("/petition", (request, response) => {
     console.log("............in post petition");
-    console.log(
-        "uuuuu ",
-        request.session.userId,
-        "signed: ",
-        request.session.signed
-    );
     let first = request.body.first;
     let last = request.body.last;
     let signature = request.body.signatures;
@@ -136,14 +130,15 @@ app.post("/registration", (request, response) => {
     let last = request.body.last;
     let email = request.body.email;
     let userPassword = request.body.password;
-
+    // let hashedPassword = "";
     bcrypt.hash(userPassword).then(result => {
         console.log(result);
+        // return result;
         db.postRegistration(first, last, email, result) //password already encrypted as result
             .then(({ rows }) => {
-                console.log("rows", rows[0].id);
-                request.session.loggedIn = "true";
+                console.log("rows----", rows[0].id);
                 request.session.userId = rows[0].id;
+                request.session.loggedIn = "true";
                 console.log("userId:", request.session.userId);
                 response.redirect("/petition");
             })
@@ -217,6 +212,12 @@ app.post("/login", (request, response) => {
 });
 app.get("/profile", (request, response) => {
     response.render("profile");
+});
+
+// app.post("/profile", (request, response) => {});
+
+app.get("/editprofile", (request, response) => {
+    response.render("editprofile");
 });
 
 app.get("logout", function(req, res) {

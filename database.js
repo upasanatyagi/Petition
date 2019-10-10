@@ -14,24 +14,18 @@ module.exports.postPetition = function(first, last, signature, userId) {
     );
 };
 module.exports.signId = function(usersignId) {
-    return db.query(`SELECT signature FROM signatures WHERE user_id=$1`, [
+    return db.query(`SELECT signature FROM signatures WHERE user_id = $1`, [
         usersignId
     ]);
 };
 
 // insert into signatures (first,last,signature) WHERE user_id=24 VALUES('aa','bb','cc');
 
-module.exports.postRegistration = function(
-    first,
-    last,
-    email,
-    password,
-    userId
-) {
+module.exports.postRegistration = function(first, last, email, password) {
     return db.query(
-        `INSERT INTO users (first,last, email,password) VALUES ($1,  $2, $3 ,$4)
+        `INSERT INTO users (first,last, email, password) VALUES ($1,  $2, $3 ,$4)
         RETURNING id`,
-        [first, last, email, password, userId]
+        [first, last, email, password]
     );
 };
 module.exports.login = function(email) {

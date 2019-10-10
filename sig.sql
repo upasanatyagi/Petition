@@ -5,7 +5,7 @@
    first VARCHAR(200)NOT NULL CHECK (first !=''),
    last VARCHAR(200)NOT NULL CHECK (last !=''),
    signature TEXT NOT NULL,
-   user_id INT --REFERENCES users(id)
+   user_id INT REFERENCES users(id)
 
  );
 
