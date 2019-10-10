@@ -1,0 +1,23 @@
+<div >
+  <img  src="/girlchildsave.jpeg" alt="broken image">
+</div>
+<h1>Without your support we dont stand anywhere.Please sign the petition today!!</h1>
+
+{{#if error }}
+<div class="err">Oops!something went wrong.Please try again to register."</div>
+{{/if}}
+<form method ="POST">
+  First Name:<br>
+  <input  type="text" name="first"><br>
+  Last Name:<br>
+  <input type="text" name="last"><br>
+  Email Address:<br>
+  <input type="text" name="email"><br>
+  Password:<br>
+  <input type="text" name="password"><br>
+  <!-- <input  name ="sig" type="hidden"><br> -->
+  <input name="_csrf" value="{{csrfToken}}" type="hidden">
+  <button type="submit">SIGN UP</button>
+</form>
+
+<h2>If you are already a member, please click here <a href= "/login.handlebars"></a>
