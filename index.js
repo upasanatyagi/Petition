@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 
 app.get("/", (req, res) => {
     // console.log('req.sessionin /route');
-    res.redirect("/petition");
+    res.redirect("/registration");
 });
 
 app.get("/petition", (req, res) => {
@@ -46,13 +46,10 @@ app.get("/petition", (req, res) => {
     });
 });
 
-// app.use(cookieParser());
-
 //checking cookies,if not present
 app.post("/petition", (request, response) => {
     console.log("............in post petition");
-    let first = request.body.first;
-    let last = request.body.last;
+
     let signature = request.body.signatures;
     // let userId = request.session.userId;
 
@@ -61,10 +58,9 @@ app.post("/petition", (request, response) => {
             console.log("....petition already signed");
             return response.redirect("/thanks");
         }
-        // console.log(first, last, signature);
         console.log("....petition not signed");
 
-        db.postPetition(first, last, signature, request.session.userId)
+        db.postPetition(signature, request.session.userId)
             .then(({ rows }) => {
                 console.log("rows", rows);
                 // response.cookie('signed', 'true');
@@ -79,7 +75,7 @@ app.post("/petition", (request, response) => {
                     error: true
                 });
             });
-        console.log("in ptition post");
+        console.log("in petition post");
     } else {
         console.log("in else not logged in ");
         return response.redirect("/login");
@@ -90,6 +86,8 @@ app.get("/thanks", (req, res) => {
     console.log("............in thanks");
 
     let usersignId = req.session.userId;
+    let renderingObject = {};
+
     console.log("//////////    ", usersignId);
     if (usersignId == "") {
         console.log("thanks:::not_signed in redirect to login");
@@ -99,27 +97,31 @@ app.get("/thanks", (req, res) => {
     db.signId(usersignId)
         .then(({ rows }) => {
             console.log("first row:", rows);
-            res.render("thanks", {
-                // first: rows[0].first,
-                signature: rows[0].signature
-            });
+            renderingObject.signature = rows[0].signature;
         })
+        .then(
+            db.getNumSigners().then(({ rows }) => {
+                console.log("getnum rows: ", rows[0].count);
+                renderingObject.count = rows[0].count;
+                res.render("thanks", renderingObject);
+            })
+        )
         .catch(e => {
-            console.log("ssssssssssssssssssssssssssssss");
+            console.log("sssss");
             console.log(e);
         });
     // });
 });
-
-app.get("/signers", (req, res) => {
-    db.getPetition().then(result => {
-        console.log(result);
-        console.log("--------------------");
-        res.render("signers", {
-            data: result.rows
-        });
-    });
-});
+//
+// app.get("/signers", (req, res) => {
+//     console.log("--------------------");
+//     db.getPetition().then(result => {
+//         console.log(result);
+//         res.render("signers", {
+//             data: result.rows
+//         });
+//     });
+// });
 
 app.get("/registration", (req, res) => {
     res.render("registration");
@@ -140,7 +142,7 @@ app.post("/registration", (request, response) => {
                 request.session.userId = rows[0].id;
                 request.session.loggedIn = "true";
                 console.log("userId:", request.session.userId);
-                response.redirect("/petition");
+                response.redirect("/profile");
             })
             .catch(e => {
                 console.log(e);
@@ -214,7 +216,50 @@ app.get("/profile", (request, response) => {
     response.render("profile");
 });
 
-// app.post("/profile", (request, response) => {});
+app.post("/profile", (request, response) => {
+    let { age, city, url } = request.body;
+
+    let user_id = request.session.userId;
+    const regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    if (url && !regexp.test(url)) {
+        url = "";
+    }
+    console.log("validator----", url);
+    console.log("city:", city);
+    if (age || city || url) {
+        db.addProfile(parseInt(age), city, url, parseInt(user_id))
+            .then(result => {
+                console.log("result:---", result);
+                response.redirect("/petition");
+            })
+            .catch(e => {
+                console.log(e);
+                response.redirect("/petition");
+            });
+    } else {
+        response.redirect("/petition");
+    }
+});
+
+app.get("/signers", (request, response) => {
+    db.signers()
+        .then(({ rows }) => {
+            response.render("signers", { data: rows });
+        })
+        .catch(e => {
+            console.log(e);
+        });
+});
+app.get("/signers/:city", (request, response) => {
+    const { city } = request.params;
+    db.signers(city)
+        .then(({ rows }) => {
+            response.render("signers", { data: rows });
+        })
+        .catch(e => {
+            console.log(e);
+        });
+});
 
 app.get("/editprofile", (request, response) => {
     response.render("editprofile");
@@ -229,11 +274,6 @@ app.listen(process.env.PORT || 8080, () =>
     console.log("petition project listening...")
 );
 
-// app.get('/test', (req, res) => {
-//     req.session.signId = 10;
-//     console.log('req.sessionin / test before redirect:', req.session);
-//     res.redirect('/');
-// });
 // app.get('/logout')
 // req.session =null
 //

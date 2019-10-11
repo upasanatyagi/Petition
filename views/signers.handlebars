@@ -2,7 +2,13 @@
     <h1> List of people who have signed the petition so far...</h1>
     <div class ="list">
       {{#data}}
-        <p>{{first}}, {{last}}</p>
+        <!-- <p>{{first}}, {{last}}</p> -->
+        {{#if url}}
+            <a href={{url}}>{{first}}{{last}}</a>{{age}}<ca href="/signers"/{{city}}
+        {{else}}
+            {{first}}{{last}}</a>{{age}}<a href ="/signers/{{city}}">{{city}}</a>
+        {{/if}}
+
       {{/data}}
     </div>
 </div>

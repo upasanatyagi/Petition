@@ -1,42 +1,44 @@
-body{
-  background-color: pink;
-}
-header{
-
-  font-style: italic;
-  font-size: 28px;
-  color: black;
-
-  font-weight: bolder;
-
-}
-.err{
-  color:red;
-  font-size: 30px;
-  font-weight: bold;
+body {
+    background-color: pink;
 }
 
-.main{
-  justify-content: center;
+header {
+    font-style: italic;
+    font-size: 28px;
+    color: black;
+    font-weight: bolder;
+}
 
-  display:flex;
-  flex-direction: column;
-  align-items: center;
+.err {
+    color: red;
+    font-size: 30px;
+    font-weight: bold;
 }
-img{
-  position:relative;
-  border:dotted black;
+
+.main {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-#signedCanvas{
-  border: dotted orange;
-  background-color: gainsboro;
+
+img {
+    position: relative;
+    border: dotted black;
 }
-.box{
-  border: 2px solid black;
-  display:flex;
-  justify-content: center;
-  flex-direction: column;
+
+#signedCanvas {
+    border: dotted orange;
+    background-color: gainsboro;
 }
-.list{
-  /* position: ealative; */
+
+.box {
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.list {
+    /* position: ealative; */
 }
