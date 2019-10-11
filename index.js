@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+exports.app = app;
 const hb = require("express-handlebars");
 // const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
@@ -218,12 +219,11 @@ app.get("/profile", (request, response) => {
 
 app.post("/profile", (request, response) => {
     let { age, city, url } = request.body;
-
     let user_id = request.session.userId;
-    const regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
-    if (url && !regexp.test(url)) {
-        url = "";
-    }
+    // const regexp = /^(?:(?:https?|ftp):\/\/)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/\S*)?$/;
+    // if (url && !regexp.test(url)) {
+    //     url = "";
+    // }
     console.log("validator----", url);
     console.log("city:", city);
     if (age || city || url) {
@@ -267,13 +267,30 @@ app.get("/editprofile", (request, response) => {
 
 app.get("logout", function(req, res) {
     req.session = null;
-    res.redirect("/register");
 });
-
+// //////////dummie routes///
+// app.get("/welcome", (req, res) => {
+//     res.send("<h1>welcome to my website</h1>");
+// });
+//
+// app.post("/welcome", (req, res) => {
+//     req.session.wasWelcomed = true;
+//     res.redirect("/home");
+// });
+//
+// app.get("/home", (req, res) => {
+//     if (!req.session.wasWelcomed) {
+//         return res.redirect("/welcome");
+//     }
+//     res.send("<h1>home</h1>");
+// });
+// //////dummie routes////
+// if (require.main === module) {
 app.listen(process.env.PORT || 8080, () =>
     console.log("petition project listening...")
 );
-
+// }
+//
 // app.get('/logout')
 // req.session =null
 //

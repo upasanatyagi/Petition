@@ -64,11 +64,11 @@ module.exports.signers = function(city) {
     console.log("in database signers--");
     if (!city) {
         return db.query(
-            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users INNER JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id`
+            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id`
         );
     } else {
         return db.query(
-            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users INNER JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
+            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
             [city]
         );
     }
