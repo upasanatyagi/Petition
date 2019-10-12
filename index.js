@@ -107,16 +107,6 @@ app.get("/thanks", (req, res) => {
         });
     // });
 });
-//
-// app.get("/signers", (req, res) => {
-//     console.log("--------------------");
-//     db.getPetition().then(result => {
-//         console.log(result);
-//         res.render("signers", {
-//             data: result.rows
-//         });
-//     });
-// });
 
 app.get("/registration", (req, res) => {
     res.render("registration");
@@ -127,10 +117,9 @@ app.post("/registration", (request, response) => {
     let last = request.body.last;
     let email = request.body.email;
     let userPassword = request.body.password;
-    // let hashedPassword = "";
+
     bcrypt.hash(userPassword).then(result => {
         console.log(result);
-        // return result;
         db.postRegistration(first, last, email, result) //password already encrypted as result
             .then(({ rows }) => {
                 console.log("rows----", rows[0].id);
@@ -159,7 +148,6 @@ app.post("/login", (request, response) => {
     db.login(email)
         .then(result => {
             // console.log("................ inside login::: first then", result);
-
             let { id, hash } = result.rows[0];
             userId = id;
             console.log("......>>>>....", userId, hash);
@@ -173,25 +161,22 @@ app.post("/login", (request, response) => {
             if (!authorised) {
                 return response.render("login", { error: true });
             }
-            // get user data from database
-            // set the cookie that indicates that the user is logged in
             request.session.loggedIn = "true";
             request.session.userId = userId;
-            // return the user id to the then statement
         })
-        .then(userId => {
+        .then(() => {
             db.getSign(userId)
                 .then(result => {
-                    console.log("------------------");
-                    console.log(result.rows);
+                    console.log("-------bbbbb-----------", userId);
+                    console.log(result);
                     console.log("------------------");
                     if (result.rows.length > 0) {
                         // let { signature } = rows[0];
                         request.session.signed = "true";
-                        console.log("//././..thanks");
+                        console.log("//......thanks");
                         return response.redirect("/thanks");
                     } else {
-                        console.log("//././..petition");
+                        console.log("......//..petition");
                         return response.redirect("petition");
                     }
                 })
@@ -207,6 +192,7 @@ app.post("/login", (request, response) => {
             });
         });
 });
+
 app.get("/profile", (request, response) => {
     response.render("profile");
 });
@@ -255,7 +241,7 @@ app.get("/signers/:city", (request, response) => {
         });
 });
 
-app.get("/editprofile", (request, response) => {
+app.get("/profile/editprofile", (request, response) => {
     let user_id = request.session.userId;
     db.showProfile(user_id)
         .then(({ rows }) => {
@@ -273,8 +259,31 @@ app.get("/editprofile", (request, response) => {
             console.log(e);
         });
 });
-app.post("profile/editprofile", (request, response) => {
-    response.render("editprofile");
+app.post("/profile/editprofile", (request, response) => {
+    let user_id = request.session.userId;
+    let newPassword = request.body.password;
+    let { first, last, email, age, city, url } = request.body;
+    console.log("in profile edit", first, last, email, age, city, url);
+    if (newPassword) {
+        bcrypt.hash(newPassword).then(result => {
+            db.updateUserPassword(age, city, url, result, user_id)
+                .then(() => {
+                    response.redirect("/thanks");
+                })
+                .catch(e => {
+                    console.log(e);
+                });
+        });
+    } else {
+        db.updateUser(first, last, email, user_id)
+            .then(() => {
+                response.redirect("thanks");
+            })
+            .catch(e => {
+                console.log(e);
+                response.redirect("editprofile", { error: true });
+            });
+    }
 });
 
 app.get("/logout", function(req, res) {

@@ -38,6 +38,7 @@ module.exports.login = function(email) {
     );
 };
 module.exports.getSign = function(userId) {
+    console.log("database.getSign userId", userId);
     return db.query(`SELECT signature FROM signatures WHERE user_id=$1`, [
         userId
     ]);
@@ -68,7 +69,7 @@ module.exports.signers = function(city) {
         );
     } else {
         return db.query(
-            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
+            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users INNER422 JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
             [city]
         );
     }
@@ -82,5 +83,21 @@ module.exports.showProfile = function(user_id) {
     ON users.id= user_profiles.user_id
     WHERE users.id = $1`,
         [user_id]
+    );
+};
+module.exports.updateUser = function(first, last, email, user_id) {
+    return db.query(
+        `UPDATE users SET first=$1, last=$2, email=$3 WHERE id=$4`,
+        [first, last, email, user_id]
+    );
+};
+module.exports.updateUserPassword = (age, city, url, user_id) => {
+    return db.query(
+        `INSERT INTO user_profiles (age, city, url, user_id)
+        VALUES ($1, $2, $3, $4)
+        ON CONFLICT (user_id)
+        DO UPDATE SET age = $1, city =$2, url = $3
+        `,
+        [age || null, city, url, user_id]
     );
 };
