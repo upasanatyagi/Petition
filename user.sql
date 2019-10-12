@@ -1,4 +1,4 @@
-
+DROP TABLE IF EXISTS users;
 CREATE TABLE users(
    id SERIAL PRIMARY KEY,
    first VARCHAR NOT NULL,
@@ -8,4 +8,4 @@ CREATE TABLE users(
 
 );
 
- SELECT * FROM users;
+--  SELECT * FROM users;

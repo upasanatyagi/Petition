@@ -5,19 +5,19 @@
 
 <form method ="POST">
   First name:<br>
-  <input  type="text" name="first"><br>
+  <input  type="text" name="first" value={{first}}><br>
   Last name:<br>
-  <input type="text" name="last"><br>
+  <input type="text" name="last" value={{last}}><br>
   <input name="_csrf" value="{{csrfToken}}" type="hidden">
   Email Address:<br>
-  <input type="text" name="email"><br>
+  <input type="text" name="email" value={{email}}><br>
   Password:<br>
-  <input type="text" name="password"><br>
+  <input type="text" name="password" value={{password}}><br>
   Age:<br>
-  <input type="INT" name="age"><br>
+  <input type="INT" name="age" value={{age}}><br>
   City:<br>
-  <input type="text" name="city"><br>
+  <input type="text" name="city"value={{city}}><br>
   Homepage:<br>
-  <input type="url" name="url"><br>
+  <input type="url" name="url" url="url"value={{url}}><br>
   <button type="submit">UPDATE</button>
 </form>

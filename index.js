@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 exports.app = app;
 const hb = require("express-handlebars");
-// const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 const db = require("./database");
 const csurf = require("csurf");
@@ -50,24 +49,19 @@ app.get("/petition", (req, res) => {
 //checking cookies,if not present
 app.post("/petition", (request, response) => {
     console.log("............in post petition");
-
     let signature = request.body.signatures;
-    // let userId = request.session.userId;
-
     if (request.session.userId) {
         if (request.session.signed == "true") {
             console.log("....petition already signed");
             return response.redirect("/thanks");
         }
         console.log("....petition not signed");
-
         db.postPetition(signature, request.session.userId)
             .then(({ rows }) => {
                 console.log("rows", rows);
                 // response.cookie('signed', 'true');
                 request.session.signed = "true";
                 console.log("............redirect post petition");
-
                 return response.redirect("/thanks");
             })
             .catch(e => {
@@ -262,11 +256,30 @@ app.get("/signers/:city", (request, response) => {
 });
 
 app.get("/editprofile", (request, response) => {
+    let user_id = request.session.userId;
+    db.showProfile(user_id)
+        .then(({ rows }) => {
+            console.log(rows);
+            response.render("editprofile", {
+                first: rows[0].first,
+                last: rows[0].last,
+                email: rows[0].email,
+                age: rows[0].age,
+                city: rows[0].city,
+                url: rows[0].url
+            });
+        })
+        .catch(e => {
+            console.log(e);
+        });
+});
+app.post("profile/editprofile", (request, response) => {
     response.render("editprofile");
 });
 
-app.get("logout", function(req, res) {
+app.get("/logout", function(req, res) {
     req.session = null;
+    res.redirect("/registration");
 });
 // //////////dummie routes///
 // app.get("/welcome", (req, res) => {
@@ -285,15 +298,13 @@ app.get("logout", function(req, res) {
 //     res.send("<h1>home</h1>");
 // });
 // //////dummie routes////
+
 // if (require.main === module) {
 app.listen(process.env.PORT || 8080, () =>
     console.log("petition project listening...")
 );
 // }
-//
-// app.get('/logout')
-// req.session =null
-//
+
 // app.get('*', (req, res) => {
 //     req.session.cohort = 'coriander';
 //     console.log('req.sessionin / test before redirect:', req.session);

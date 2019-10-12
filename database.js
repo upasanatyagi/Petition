@@ -73,3 +73,14 @@ module.exports.signers = function(city) {
         );
     }
 };
+module.exports.showProfile = function(user_id) {
+    console.log("user_id:-----", user_id);
+    return db.query(
+        `SELECT first AS first,last AS last,email AS email,age AS age,city AS city,url AS url
+    FROM users
+    LEFT JOIN user_profiles
+    ON users.id= user_profiles.user_id
+    WHERE users.id = $1`,
+        [user_id]
+    );
+};
