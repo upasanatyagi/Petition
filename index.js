@@ -85,10 +85,10 @@ app.get("/thanks", (req, res) => {
 
     console.log("//////////    ", usersignId);
     if (usersignId == "") {
-        console.log("thanks:::not_signed in redirect to login");
+        console.log("thanks:::not_Logged in redirect to login");
         return res.redirect("/login");
     }
-    console.log("aaaaammmmmmmmmmmmmmmmmmmmm here");
+    // console.log("thanks::Logged in redirect to login");
     db.signId(usersignId)
         .then(({ rows }) => {
             console.log("first row:", rows);
@@ -151,6 +151,7 @@ app.post("/login", (request, response) => {
             let { id, hash } = result.rows[0];
             userId = id;
             console.log("......>>>>....", userId, hash);
+
             return bcrypt.compare(password, hash).then(result => {
                 console.log(result);
                 return result;
@@ -174,10 +175,10 @@ app.post("/login", (request, response) => {
                         // let { signature } = rows[0];
                         request.session.signed = "true";
                         console.log("//......thanks");
-                        return response.redirect("/thanks");
+                        response.redirect("/thanks");
                     } else {
                         console.log("......//..petition");
-                        return response.redirect("petition");
+                        response.redirect("petition");
                     }
                 })
                 .catch(e => {
@@ -207,13 +208,13 @@ app.post("/profile", (request, response) => {
     console.log("validator----", url);
     console.log("city:", city);
     if (age || city || url) {
-        db.addProfile(parseInt(age), city, url, parseInt(user_id))
+        db.addProfile(parseInt(age), city, url, user_id)
             .then(result => {
                 console.log("result:---", result);
                 response.redirect("/petition");
             })
             .catch(e => {
-                console.log(e);
+                console.log("in post.profile", e);
                 response.redirect("/petition");
             });
     } else {
@@ -230,6 +231,7 @@ app.get("/signers", (request, response) => {
             console.log(e);
         });
 });
+
 app.get("/signers/:city", (request, response) => {
     const { city } = request.params;
     db.signers(city)
@@ -259,31 +261,31 @@ app.get("/profile/editprofile", (request, response) => {
             console.log(e);
         });
 });
+
 app.post("/profile/editprofile", (request, response) => {
     let user_id = request.session.userId;
-    let newPassword = request.body.password;
-    let { first, last, email, age, city, url } = request.body;
+    let { first, last, email, age, city, url, password } = request.body;
     console.log("in profile edit", first, last, email, age, city, url);
-    if (newPassword) {
-        bcrypt.hash(newPassword).then(result => {
-            db.updateUserPassword(age, city, url, result, user_id)
-                .then(() => {
-                    response.redirect("/thanks");
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-        });
-    } else {
-        db.updateUser(first, last, email, user_id)
+
+    bcrypt.hash(password).then(hash => {
+        if (!password) {
+            hash = null;
+        }
+        db.updateUser(first, last, email, hash, user_id)
             .then(() => {
-                response.redirect("thanks");
+                console.log("hash**********", hash);
+                console.log("update successful");
+            })
+            .then(() => {
+                db.addProfile(age, city, url, user_id).then(() => {
+                    response.redirect("/thanks");
+                });
             })
             .catch(e => {
-                console.log(e);
-                response.redirect("editprofile", { error: true });
+                console.log("=================update user", e);
+                response.redirect("/profile/editprofile");
             });
-    }
+    });
 });
 
 app.get("/logout", function(req, res) {

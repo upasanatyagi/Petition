@@ -48,19 +48,26 @@ module.exports.getNumSigners = () => {
 };
 
 module.exports.addProfile = function(age, city, url, user_id) {
-    console.log(
-        "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj       ",
-        age,
-        city,
-        url,
-        user_id
-    );
+    console.log("database.addProfile.upsert", age, city, url, user_id);
     return db.query(
         `INSERT INTO  user_profiles(age,city,url,user_id) VALUES ($1, $2, $3, $4)
-        RETURNING id`,
-        [age, city, url, user_id]
+        ON CONFLICT (user_id)
+        DO UPDATE SET age = $1, city =$2, url = $3
+        RETURNING id
+        `,
+        [age || 0, city, url, user_id]
     );
 };
+// module.exports.updateUserProfile = (age, city, url, user_id) => {
+//     return db.query(
+//         `INSERT INTO user_profiles (age, city, url, user_id)
+//         VALUES ($1, $2, $3, $4)
+//         ON CONFLICT (user_id)
+//         DO UPDATE SET age = $1, city =$2, url = $3
+//         `,
+//         [age || null, city, url, user_id]
+//     );
+// };
 module.exports.signers = function(city) {
     console.log("in database signers--");
     if (!city) {
@@ -85,19 +92,18 @@ module.exports.showProfile = function(user_id) {
         [user_id]
     );
 };
-module.exports.updateUser = function(first, last, email, user_id) {
-    return db.query(
-        `UPDATE users SET first=$1, last=$2, email=$3 WHERE id=$4`,
-        [first, last, email, user_id]
-    );
-};
-module.exports.updateUserPassword = (age, city, url, user_id) => {
-    return db.query(
-        `INSERT INTO user_profiles (age, city, url, user_id)
-        VALUES ($1, $2, $3, $4)
-        ON CONFLICT (user_id)
-        DO UPDATE SET age = $1, city =$2, url = $3
-        `,
-        [age || null, city, url, user_id]
-    );
+module.exports.updateUser = function(first, last, email, password, user_id) {
+    if (password) {
+        console.log("database.updateUser password");
+        return db.query(
+            `UPDATE users SET first=$1, last=$2, email=$3 ,password=$4 WHERE id=$5`,
+            [first, last, email, password, user_id]
+        );
+    } else {
+        console.log("database.updateUser not password");
+        return db.query(
+            `UPDATE users SET first=$1, last=$2, email=$3  WHERE id=$4`,
+            [first, last, email, user_id]
+        );
+    }
 };
