@@ -58,16 +58,7 @@ module.exports.addProfile = function(age, city, url, user_id) {
         [age || 0, city, url, user_id]
     );
 };
-// module.exports.updateUserProfile = (age, city, url, user_id) => {
-//     return db.query(
-//         `INSERT INTO user_profiles (age, city, url, user_id)
-//         VALUES ($1, $2, $3, $4)
-//         ON CONFLICT (user_id)
-//         DO UPDATE SET age = $1, city =$2, url = $3
-//         `,
-//         [age || null, city, url, user_id]
-//     );
-// };
+
 module.exports.signers = function(city) {
     console.log("in database signers--");
     if (!city) {
@@ -106,4 +97,7 @@ module.exports.updateUser = function(first, last, email, password, user_id) {
             [first, last, email, user_id]
         );
     }
+};
+module.exports.deleteSignature = function(user_id) {
+    return db.query(`DELETE FROM signatures WHERE user_id=$1`, [user_id]);
 };

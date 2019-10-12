@@ -50,12 +50,15 @@ app.get("/petition", (req, res) => {
 app.post("/petition", (request, response) => {
     console.log("............in post petition");
     let signature = request.body.signatures;
+    console.log("kkkkkkkkkkkkkkkkkkkkk", request.body.signatures);
     if (request.session.userId) {
-        if (request.session.signed == "true") {
+        if (signature) {
+            request.session.signed == "true";
             console.log("....petition already signed");
-            return response.redirect("/thanks");
+        } else {
+            return response.redirect("/petition");
         }
-        console.log("....petition not signed");
+        // console.log("....petition not signed");
         db.postPetition(signature, request.session.userId)
             .then(({ rows }) => {
                 console.log("rows", rows);
@@ -65,7 +68,7 @@ app.post("/petition", (request, response) => {
                 return response.redirect("/thanks");
             })
             .catch(e => {
-                console.log(e);
+                console.log("index.petition.postPetition", e);
                 response.render("petition", {
                     error: true
                 });
@@ -286,6 +289,9 @@ app.post("/profile/editprofile", (request, response) => {
                 response.redirect("/profile/editprofile");
             });
     });
+});
+app.post("/signatures/delete", (req, res) => {
+    res.redirect("/petition");
 });
 
 app.get("/logout", function(req, res) {
