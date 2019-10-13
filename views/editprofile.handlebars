@@ -1,9 +1,10 @@
+<div class="main">
 <div >
   <img  src="/girlchildsave.jpeg" alt="broken image">
 </div>
 <h1>Edit your profile</h1>
-
-<form method ="POST">
+</div>
+<form class="profileedit" method ="POST">
   First name:<br>
   <input  type="text" name="first" value={{first}}><br>
   Last name:<br>
@@ -19,5 +20,6 @@
   <input type="text" name="city"value={{city}}><br>
   Homepage:<br>
   <input type="url" name="url" url="url"value={{url}}><br>
-  <button type="submit">UPDATE</button>
+  <button id="update" type="submit">UPDATE</button>
 </form>
+{{>footer}}

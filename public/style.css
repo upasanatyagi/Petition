@@ -45,6 +45,98 @@ img {
     flex-direction: column;
 }
 
+/* .form {
+    display: flex;
+    overflow-y: scroll;
+    padding-bottom: 1.25rem;
+} */
+input[type=text], input[type=password], input[type=INT], input[type=url] {
+    width: 130px;
+    border: 2px solid red;
+    box-sizing: border-box;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 16px;
+    background-image: url('searchicon.png');
+    background-position: 10px 10px;
+    padding: 12px 20px 12px 40px;
+    background-repeat: no-repeat;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+    width: 40%;
+}
+
+input[type=password]:focus {
+    width: 40%;
+}
+
+input[type=INT]:focus {
+    width: 40%;
+}
+
+input[type=url]:focus {
+    width: 40%;
+}
+
+#regbutton, #continue, #update, #submit, #signup {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #89abe3ff;
+    color: black;
+    margin-top: 30px;
+    width: 120px;
+    align-self: center;
+}
+
+.loginform {
+    margin-left: 790px;
+}
+
+.regform {
+    margin-left: 790px;
+}
+
+.profileedit {
+    margin-left: 790px;
+}
+
+#submit {
+    margin-left: 200px;
+}
+
+.logout {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 150px;
+    text-align: center;
+}
+
+.sigLogout {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 200px;
+    text-align: center;
+}
+
+.editProfile {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 150px;
+    text-align: center;
+}
+
 .footer {
-    color: yellow;
+    color: red;
 }

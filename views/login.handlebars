@@ -1,16 +1,22 @@
+<div class="main">
+
 <div >
   <img  src="/girlchildsave.jpeg" alt="broken image">
+  <h1>Please Log in here.</h1>
 </div>
-<h1>Please Log in here.</h1>
-<form method ="POST">
-  Email Address:<br>
-  <input type="text" name="email"><br>
-  Password:<br>
-  <input type="password" name="password"><br>
-  <input name="_csrf" value="{{csrfToken}}" type="hidden">
-  <button type="submit">SIGN UP</button>
-</form>
+</div>
+<div class="loginform">
+    <form method ="POST">
+        Email Address:<br>
+        <input type="text" name="email"><br>
+        Password:<br>
+        <input type="password" name="password"><br>
+        <input name="_csrf" value="{{csrfToken}}" type="hidden">
+        <button id="signup"type="submit">Log In</button>
+    </form>
+    {{>footer}}
 
 {{#if error }}
 <div class="err">Oops!something went wrong.Please try again."</div>
 {{/if}}
+</div>

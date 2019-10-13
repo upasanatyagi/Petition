@@ -1,22 +1,30 @@
+<div class="main">
 <div >
   <img  src="/girlchildsave.jpeg" alt="broken image">
 </div>
 <h1>Beti Bachao, Beti Padhao (translation: Save the daughter, educate the daughter) is a campaign of the Government of India that aims to generate awareness and improve the efficiency of welfare services intended for girls in India. </h1>
-
+</div>
 {{#if error }}
-<div class="err">Oops!something went wrong.Please dont forget to fill the form and sign it."</div>
+    <div class="err">Oops!something went wrong.Please dont forget to fill the form and sign it."</div>
 {{/if}}
-<form method ="POST">
-  First Name:<br>
-  <input  type="text" id='r.fName'name="first"><br>
-  Last Name:<br>
-  <input type="text" name="last"><br>
-  Email Address:<br>
-  <input type="text" name="email"><br>
-  Password:<br>
-  <input type="password" name="password"><br>
-  <input name="_csrf" value="{{csrfToken}}" type="hidden">
-  <button type="submit">SIGN UP</button>
-</form>
 
+<form class="regform"method ="POST">
+    First Name:<br>
+    <input  type="text" id='r.fName'name="first"><br>
+
+    Last Name:<br>
+    <input type="text" name="last"><br>
+
+    Email Address:<br>
+    <input type="text" name="email"><br>
+
+    Password:<br>
+    <input type="password" name="password"><br>
+
+    <input name="_csrf" value="{{csrfToken}}" type="hidden">
+    <button name="submit" type="submit" id="regbutton">REGISTER</button>
+
+</form>
 <h2>If you are already a member, please click here <a href= "/login">Log in</a></h2>
+
+{{>footer}}

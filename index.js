@@ -49,6 +49,7 @@ app.use((req, res, next) => {
         //     console.log("userId:", req.session.userId);
         // return res.redirect("/login");
         // }
+        console.log("should be going to /login or /registration or /logout");
     } else {
         console.log("index.middleware:notURL");
         if (req.session.userId) {
@@ -117,8 +118,7 @@ app.get("/thanks", (req, res) => {
         console.log("thanks:::not_Logged in redirect to login");
         return res.redirect("/login");
     }
-    // console.log("thanks::Logged in redirect to login");
-    // db.signId(usersignId)
+
     db.getSign(usersignId)
         .then(({ rows }) => {
             // if (!rows.length) {
@@ -149,6 +149,7 @@ app.get("/registration", (req, res) => {
 });
 
 app.post("/registration", (request, response) => {
+    console.log("index.registration.post");
     let first = request.body.first;
     let last = request.body.last;
     let email = request.body.email;
@@ -183,7 +184,7 @@ app.post("/login", (request, response) => {
     let { password, email } = request.body;
     db.login(email)
         .then(result => {
-            // console.log("................ inside login::: first then", result);
+            console.log("................ inside login::: first then", result);
             let { id, hash } = result.rows[0];
             userId = id;
             console.log(
