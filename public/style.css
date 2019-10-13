@@ -40,5 +40,11 @@ img {
 }
 
 .list {
-    /* position: ealative; */
+    padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    color: yellow;
 }

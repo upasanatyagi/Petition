@@ -39,11 +39,13 @@ module.exports.login = function(email) {
 };
 module.exports.getSign = function(userId) {
     console.log("database.getSign userId", userId);
-    return db.query(`SELECT signature FROM signatures WHERE user_id=$1`, [
-        userId
-    ]);
+    return db.query(
+        `SELECT signatures.signature,users.first FROM users LEFT JOIN  signatures ON signatures.user_id = users.id WHERE users.id=$1`,
+        [userId]
+    );
 };
 module.exports.getNumSigners = () => {
+    console.log("..database.getNumSigners");
     return db.query(`SELECT COUNT(*) FROM signatures`);
 };
 
@@ -63,11 +65,11 @@ module.exports.signers = function(city) {
     console.log("in database signers--");
     if (!city) {
         return db.query(
-            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id`
+            `SELECT users.first as first ,users.last as last,user_profiles.age as age,user_profiles.city as city, user_profiles.url as url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id`
         );
     } else {
         return db.query(
-            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users INNER422 JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
+            `SELECT users.first,users.last,user_profiles.age,user_profiles.city,user_profiles.url FROM users INNER JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id WHERE user_profiles.city=$1`,
             [city]
         );
     }
@@ -99,5 +101,6 @@ module.exports.updateUser = function(first, last, email, password, user_id) {
     }
 };
 module.exports.deleteSignature = function(user_id) {
+    console.log("database.delete.signatures");
     return db.query(`DELETE FROM signatures WHERE user_id=$1`, [user_id]);
 };

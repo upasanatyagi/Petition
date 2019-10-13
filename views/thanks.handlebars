@@ -1,18 +1,19 @@
 
-<div class="thanks">
-    <h1>Thank you!for supporting the cause and believing in us!! </h1>
+<header>
 
-    <h2> {{first}}</h2>
-    <img src="{{signature}}" alt="signature"/>
-    <a href ="/signers">List of our signers{{count}}<a>
+    <img  src="/girlchildsave.jpeg" alt="broken image">
+    <h2>Thank you for supporting the cause and believing in us!! </h2>
+    <a href='/profile/editprofile'>Edit Profile</a>
     <a href="/logout">LOG OUT</a>
+</header>
 
-    <!-- <form action="/signature/delete" method="POST">
+<div class='thanks'>
+    <h2> Thank you{{first}}</h2>
+    <img src="{{signature}}" alt="signature"/>
+    <h2>
+    <a href ="/signers">List of our signers - {{count}}<a>
+</div>
+    <form action="/signature/delete" method="POST">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <button>Delete Signature</button>
-    </form> -->
-
-</div>
-
-<a href='/profile/editprofile'>Edit Profile</a>
-<a href='/signature/delete'>Delete Signature</a>
+    </form>

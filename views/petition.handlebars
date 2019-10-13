@@ -10,16 +10,16 @@
 
           <form method ="POST" action="/petition">
             <input  name ="sig" type="hidden"><br>
-            <input name="_csrf" value="{{csrfToken}}" type="hidden">
             Please sign here:<br>
             <input type="hidden" name="signatures" id="signatures">
             <canvas id="signedCanvas" width='500' height='250'></canvas><br>
+            <input name="_csrf" value="{{csrfToken}}" type="hidden">
             <button type="submit">Submit</button>
           </form>
-           
+
 
           {{#if error }}
-          <div class="err">Oops!something went wrong.Please dont forget to fill the form and sign it."</div>
+          <div class="err">Oops!something went wrong.Please dont forget to sign."</div>
           {{/if}}
 
           <div>
@@ -28,3 +28,4 @@
           <a href="/logout">LOG OUT</a>
 
       </div>
+       <script src="script.js"></script>

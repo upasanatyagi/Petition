@@ -35,6 +35,32 @@ app.use((req, res, next) => {
 //     sameSite: true
 // });
 
+app.use((req, res, next) => {
+    console.log("req.url", req.url);
+    if (
+        req.url === "/registration" ||
+        req.url === "/login" ||
+        req.url === "/logout"
+    ) {
+        console.log("****req.url", req.url);
+
+        // console.log("not registration");
+        // if (!req.session.userId) {
+        //     console.log("userId:", req.session.userId);
+        // return res.redirect("/login");
+        // }
+    } else {
+        console.log("index.middleware:notURL");
+        if (req.session.userId) {
+            console.log("userId Exists ", req.session.userId);
+        } else {
+            console.log("userId absent");
+            return res.redirect("/registration");
+        }
+    }
+    next();
+});
+
 app.get("/", (req, res) => {
     // console.log('req.sessionin /route');
     res.redirect("/registration");
@@ -86,26 +112,33 @@ app.get("/thanks", (req, res) => {
     let usersignId = req.session.userId;
     let renderingObject = {};
 
-    console.log("//////////    ", usersignId);
+    console.log("*** index.thanks    ", usersignId);
     if (usersignId == "") {
         console.log("thanks:::not_Logged in redirect to login");
         return res.redirect("/login");
     }
     // console.log("thanks::Logged in redirect to login");
-    db.signId(usersignId)
+    // db.signId(usersignId)
+    db.getSign(usersignId)
         .then(({ rows }) => {
-            console.log("first row:", rows);
+            // if (!rows.length) {
+            console.log("***rows", rows);
             renderingObject.signature = rows[0].signature;
+            renderingObject.first = rows[0].first;
+
+            // }
+            console.log("index.thanks signature:", renderingObject);
         })
         .then(
-            db.getNumSigners().then(({ rows }) => {
-                console.log("getnum rows: ", rows[0].count);
-                renderingObject.count = rows[0].count;
+            db.getNumSigners().then(signCount => {
+                console.log("getnum rows: ", signCount.rows[0].count);
+                renderingObject.count = signCount.rows[0].count;
+                console.log("***** renderingObject", renderingObject);
                 res.render("thanks", renderingObject);
             })
         )
         .catch(e => {
-            console.log("sssss");
+            console.log("index.thanks.signId.error");
             console.log(e);
         });
     // });
@@ -153,12 +186,25 @@ app.post("/login", (request, response) => {
             // console.log("................ inside login::: first then", result);
             let { id, hash } = result.rows[0];
             userId = id;
-            console.log("......>>>>....", userId, hash);
+            console.log(
+                ">>>>.index.login.post userid and passwordhash ",
+                userId,
+                hash
+            );
 
-            return bcrypt.compare(password, hash).then(result => {
-                console.log(result);
-                return result;
-            });
+            return bcrypt
+                .compare(password, hash)
+                .then(result => {
+                    console.log(result);
+                    return result;
+                })
+                .catch(e => {
+                    console.log("index.login.post.bcrypt.error ", e);
+                    // response.render("login", {
+                    //     error: true
+                    // });
+                    response.redirect("/login");
+                });
         })
         .then(authorised => {
             "................ auth inside login::: 2nd thllllllen";
@@ -172,20 +218,23 @@ app.post("/login", (request, response) => {
             db.getSign(userId)
                 .then(result => {
                     console.log("-------bbbbb-----------", userId);
-                    console.log(result);
-                    console.log("------------------");
+                    // console.log(result);
+                    console.log(
+                        "------------------ rows length",
+                        result.rows.length
+                    );
                     if (result.rows.length > 0) {
                         // let { signature } = rows[0];
                         request.session.signed = "true";
-                        console.log("//......thanks");
-                        response.redirect("/thanks");
+                        console.log("/login redirect to /thanks", userId);
+                        return response.redirect("/thanks");
                     } else {
-                        console.log("......//..petition");
-                        response.redirect("petition");
+                        console.log("/login redirect to /petition");
+                        return response.redirect("petition");
                     }
                 })
                 .catch(e => {
-                    console.log("llllllll", e);
+                    console.log("index.login.post.getSign error", e);
                 });
             console.log("................ inside login::: 2nd then");
         })
@@ -228,6 +277,7 @@ app.post("/profile", (request, response) => {
 app.get("/signers", (request, response) => {
     db.signers()
         .then(({ rows }) => {
+            console.log("index.signers.get rows: ", rows);
             response.render("signers", { data: rows });
         })
         .catch(e => {
@@ -290,8 +340,20 @@ app.post("/profile/editprofile", (request, response) => {
             });
     });
 });
-app.post("/signatures/delete", (req, res) => {
-    res.redirect("/petition");
+app.post("/signature/delete", (req, res) => {
+    let user_id = req.session.userId;
+    req.session.signed = "";
+    db.deleteSignature(user_id)
+        .then(() => {
+            console.log("*********deleted");
+            res.redirect("/petition");
+        })
+        .catch(e => {
+            console.log("signature,delete:", e);
+            res.render("petition", {
+                error: true
+            });
+        });
 });
 
 app.get("/logout", function(req, res) {

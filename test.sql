@@ -1,0 +1,1 @@
+SELECT users.first as first ,users.last as last,user_profiles.age as age,user_profiles.city as city, user_profiles.url as url FROM users LEFT JOIN user_profiles ON users.id=user_profiles.user_id  INNER JOIN signatures ON users.id=signatures.user_id;
