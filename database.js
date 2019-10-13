@@ -1,6 +1,10 @@
 const spicedPg = require("spiced-pg");
 
-const db = spicedPg(`postgres:postgres:postgres@localhost:5432/practice`);
+var dbUrl =
+    process.env.DATABASE_URL ||
+    `postgres:postgres:postgres@localhost:5432/practice`;
+
+const db = spicedPg(dbUrl);
 //first protocal second authorisation third port and fourth path
 
 module.exports.getPetition = () => {
