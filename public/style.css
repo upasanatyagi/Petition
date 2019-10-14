@@ -137,6 +137,35 @@ input[type=url]:focus {
     text-align: center;
 }
 
+.thanksedit {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 150px;
+    text-align: center;
+}
+
+.thankslogout {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 150px;
+    text-align: center;
+}
+
+/* .signlist {
+    font-size: 18px;
+    border-radius: 30px;
+    background-color: #e69a8dff;
+    color: black;
+    margin-top: 30px;
+    width: 150px;
+    text-align: center;
+} */
 .footer {
     color: red;
 }
